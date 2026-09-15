@@ -1,8 +1,8 @@
-streamlit>=1.30
-opencv-python-headless>=4.8
-numpy>=1.24
-pandas>=2.0
-Pillow>=10.0
-streamlit-drawable-canvas>=0.9
-cvzone>=1.6
-mediapipe>=0.10
+streamlit
+opencv-python-headless
+mediapipe==0.10.9
+cvzone==1.6.1
+streamlit-drawable-canvas-fix
+Pillow
+numpy
+pandas
