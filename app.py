@@ -18,7 +18,7 @@ from streamlit_drawable_canvas import st_canvas
 #  Page config
 # ============================================================
 st.set_page_config(
-    page_title="PixelForge Studio",
+    page_title="Smart-Image-Editor",
     page_icon="🎛️",
     layout="wide",
     initial_sidebar_state="expanded",
