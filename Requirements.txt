@@ -1,8 +1,8 @@
 streamlit
+streamlit-drawable-canvas-fix
 opencv-python-headless
 mediapipe==0.10.9
 cvzone==1.6.1
-streamlit-drawable-canvas-fix
-Pillow
-numpy
+numpy<2
 pandas
+Pillow
