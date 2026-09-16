@@ -13,10 +13,6 @@ except Exception:
 
 from streamlit_drawable_canvas import st_canvas
 
-
-# ============================================================
-#  Page config
-# ============================================================
 st.set_page_config(
     page_title="    Smart-Image-Editor",
     page_icon="🎛️",
@@ -25,9 +21,6 @@ st.set_page_config(
 )
 
 
-# ============================================================ canvas
-#  Design system — "Carbon" dark studio theme
-# ============================================================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
@@ -189,9 +182,6 @@ div[data-testid="stButton"] > button[kind="primary"]:hover {
 """, unsafe_allow_html=True)
 
 
-# ============================================================
-#  Session state
-# ============================================================
 def init_state():
     defaults = {
         "original": None,
@@ -241,10 +231,6 @@ def apply_transform(fn, toast, warn="Operation failed — nothing changed."):
     return False
 
 
-# ============================================================
-#  Safe widgets (prevents out-of-bounds session values
-#  after crop/resize shrinks the image)
-# ============================================================
 def safe_slider(label, lo, hi, default, key, **kw):
     val = st.session_state.get(key)
     if val is not None and not (lo <= val <= hi):
@@ -270,10 +256,6 @@ def safe_number(label, lo, hi, default, key, **kw):
         **kw
     )
 
-
-# ============================================================
-#  I/O helpers
-# ============================================================
 def load_image_file(f):
     if f is not None:
         arr = np.asarray(bytearray(f.read()), dtype=np.uint8)
@@ -287,9 +269,6 @@ def to_rgb(img):
     return cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
 
-# ============================================================
-#  Filters
-# ============================================================
 def gray_scale(img):
     g = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     return cv.cvtColor(g, cv.COLOR_GRAY2BGR)
@@ -335,9 +314,6 @@ def apply_warm(img):
     return cv.merge([b, g, r]).astype(np.uint8)
 
 
-# ============================================================
-#  Light
-# ============================================================
 def adjust_brightness(img, value=0):
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV).astype(np.int16)
     h, s, v = cv.split(hsv)
@@ -363,9 +339,6 @@ def auto_fix(img):
     return cv.cvtColor(cv.merge([clahe.apply(l), a, b]), cv.COLOR_LAB2BGR)
 
 
-# ============================================================
-#  Transform — rotate / flip / crop / resize / perspective
-# ============================================================
 def rotate_90_cw(img):
     return cv.rotate(img, cv.ROTATE_90_CLOCKWISE)
 
@@ -417,7 +390,6 @@ def resize_image(img, new_w, new_h):
 def perspective_correct(img, tl, tr, br, bl):
     pts = np.array([tl, tr, br, bl], dtype=np.float32)
 
-    # Convert the four points from tuples to NumPy arrays
     tl, tr, br, bl = pts
 
     w1 = np.linalg.norm(br - bl)
@@ -429,11 +401,7 @@ def perspective_correct(img, tl, tr, br, bl):
                    dtype=np.float32)
     M = cv.getPerspectiveTransform(pts, dst)
     return cv.warpPerspective(img, M, (max_w, max_h))
-
-
-# ============================================================
-#  Color Studio
-# ============================================================
+    
 def color_studio(img, hue=0, saturation=100, lightness=0,
                  temperature=0, tint=0, vibrance=0,
                  r_curve=(0, 128, 255), g_curve=(0, 128, 255),
@@ -477,9 +445,6 @@ def histogram_df(img):
     return pd.DataFrame(data)
 
 
-# ============================================================
-#  Object removal (inpainting)
-# ============================================================
 def remove_object(image, user_mask, inpaint_radius=3, mask_expansion=2):
     if image is None or user_mask is None:
         return None
@@ -494,10 +459,6 @@ def remove_object(image, user_mask, inpaint_radius=3, mask_expansion=2):
     mask = np.where(mask > 30, 255, 0).astype(np.uint8)
     return cv.inpaint(image, mask, float(inpaint_radius), cv.INPAINT_TELEA)
 
-
-# ============================================================
-#  Background replacement
-# ============================================================
 @st.cache_resource
 def get_segmentor():
     return SelfiSegmentation()
@@ -518,9 +479,6 @@ def replace_background(img, mode, color_hex, bg_file):
     return seg.removeBG(img, bg, cutThreshold=0.65)
 
 
-# ============================================================
-#  UI blocks
-# ============================================================
 def render_header():
     st.markdown("""
     <div class="pf-header">
@@ -551,14 +509,10 @@ def render_info_card(img):
     """, unsafe_allow_html=True)
 
 
-# ============================================================
-#  Tool tabs
-# ============================================================ 
 def tab_crop_rotate():
     img = st.session_state.current
     h, w = img.shape[:2]
 
-    # ---------- Rotate ----------
     st.markdown('<p class="pf-sub2">⟳ Rotate</p>', unsafe_allow_html=True)
     r1, r2, r3 = st.columns(3)
     with r1:
@@ -581,7 +535,6 @@ def tab_crop_rotate():
 
     st.divider()
 
-    # ---------- Crop (drag a rectangle on the canvas, Photoshop-style) ----------
     st.markdown('<p class="pf-sub2">✂️ Crop</p>', unsafe_allow_html=True)
     st.caption("Drag a rectangle on the image below, then apply the crop.")
 
@@ -661,9 +614,6 @@ def tab_resize():
 
     lock = st.checkbox("Lock aspect ratio", value=True)
 
-    # --------------------------------------------------
-    # Apply preset BEFORE creating rz_w / rz_h widgets
-    # --------------------------------------------------
     if preset != "Custom":
         pw, ph = {
             "1920 × 1080 (FHD)": (1920, 1080),
@@ -681,9 +631,6 @@ def tab_resize():
             f"Preset loaded: {pw} × {ph} px — press Apply Resize."
         )
 
-    # --------------------------------------------------
-    # Now create the widgets
-    # --------------------------------------------------
     rs1, rs2 = st.columns(2)
 
     with rs1:
@@ -786,7 +733,6 @@ def tab_perspective():
                 "Perspective corrected.",
                 "Invalid corner points."
             )
-# safe_number
 def reset_perspective_points():
     img = st.session_state.current
     h, w = img.shape[:2]
@@ -867,12 +813,10 @@ def tab_color_studio():
     st.markdown('<p class="pf-hint">Pro color grading — histogram, balance, HSL & RGB curves '
                 'with live preview.</p>', unsafe_allow_html=True)
 
-    # ---------------- Histogram ----------------
     with st.expander("📈 Histogram", expanded=True):
         st.bar_chart(histogram_df(st.session_state.current),
                      color=["#3b82f6", "#22c55e", "#ef4444"], height=170)
 
-    # ---------------- Color balance ----------------
     st.markdown('<p class="pf-sub2">🌡️ Color Balance</p>', unsafe_allow_html=True)
     cb1, cb2 = st.columns(2)
     with cb1:
@@ -888,7 +832,6 @@ def tab_color_studio():
             help="Green ← → Magenta"
         )
 
-    # ---------------- HSL ----------------
     st.markdown('<p class="pf-sub2">🎚️ Hue · Saturation · Lightness</p>',
                 unsafe_allow_html=True)
     hue = st.slider("Hue shift", -90, 90, 0, 1, key="hue")
@@ -902,7 +845,6 @@ def tab_color_studio():
             help="Boosts muted colors, protects saturated areas"
         )
 
-    # ---------------- RGB curves ----------------
     with st.expander("📉 RGB Curves", expanded=False):
         st.caption("Shadows / Midtones / Highlights output level per channel.")
         cr1, cr2, cr3 = st.columns(3)
@@ -925,7 +867,6 @@ def tab_color_studio():
             b_m = st.slider("B midtones", 0, 255, 128, key="b_m")
             b_h = st.slider("B highlights", 0, 255, 255, key="b_h")
 
-    # ---------------- Live preview ----------------
     preview = color_studio(
         st.session_state.current,
         hue=hue, saturation=saturation, lightness=lightness,
@@ -1025,7 +966,6 @@ def tab_object_removal():
 
     rgba = canvas.image_data
     r, g, b = rgba[:, :, 0], rgba[:, :, 1], rgba[:, :, 2]
-    # Detect the cyan brush (image is opaque, so use color, not alpha)
     mask_small = ((b > 170) & (g > 170) & (r < 140)).astype(np.uint8) * 255
 
     full_mask = cv.resize(mask_small, (ow, oh), interpolation=cv.INTER_NEAREST)
@@ -1104,15 +1044,10 @@ def tab_export():
                        mime=mime, type="primary", use_container_width=True)
     st.caption("Export reflects the latest state of your canvas.")
 
-
-# ============================================================
-#  Main
-# ============================================================
 def main():
     init_state()
     render_header()
 
-    # ---------------- Sidebar ----------------
     with st.sidebar:
         st.markdown('<p class="pf-side-title">📥 Import</p>', unsafe_allow_html=True)
         st.markdown('<p class="pf-side-sub">Upload an image to open it in the studio.</p>',
@@ -1156,7 +1091,6 @@ def main():
                     if reset_image():
                         st.toast("Restored to original.", icon="🔄")
 
-    # ---------------- Workspace ----------------
     if st.session_state.current is None:
         st.markdown("""
         <div class="pf-empty">
