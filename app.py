@@ -18,7 +18,7 @@ from streamlit_drawable_canvas import st_canvas
 #  Page config
 # ============================================================
 st.set_page_config(
-    page_title="PixelForge Studio",
+    page_title="    Smart-Image-Editor",
     page_icon="🎛️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -1165,7 +1165,7 @@ def main():
             <p>Upload an image from the sidebar to start editing.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.markdown('<p class="pf-footer">PixelForge Studio · OpenCV · Streamlit</p>',
+        st.markdown('<p class="pf-footer">    Smart-Image-Editor · OpenCV · Streamlit</p>',
                     unsafe_allow_html=True)
         return
 
