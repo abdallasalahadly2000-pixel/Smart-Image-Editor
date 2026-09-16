@@ -34,7 +34,7 @@ Crop, color-grade, retouch, and swap backgrounds — all without leaving your br
 
 ## 🚀 Live Demo
 
-👉 **[Try it on Streamlit Cloud](https://your-app.streamlit.app)**
+👉 **[Try it on Streamlit Cloud]([https://your-app.streamlit.app](https://smart-image-editor-first-version.streamlit.app/))**
 
 ---
 
