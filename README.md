@@ -32,10 +32,11 @@ Crop, color-grade, retouch, and swap backgrounds — all without leaving your br
 
 ---
 
+
 ## 🚀 Live Demo
 
-👉 **[Try it on Streamlit Cloud]([https://your-app.streamlit.app](https://smart-image-editor-first-version.streamlit.app/))**
 
+link of project : [Smart Image Editor](https://smart-image-editor-first-version.streamlit.app/)
 ---
 
 ## 🛠️ Installation
