@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import cv2 as cv
- 
+
 from PIL import Image
 
 try:
@@ -18,14 +18,14 @@ from streamlit_drawable_canvas import st_canvas
 #  Page config
 # ============================================================
 st.set_page_config(
-    page_title="Smart-Image-Editor",
+    page_title="PixelForge Studio",
     page_icon="🎛️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 
-# ============================================================
+# ============================================================ canvas
 #  Design system — "Carbon" dark studio theme
 # ============================================================
 st.markdown("""
@@ -553,7 +553,7 @@ def render_info_card(img):
 
 # ============================================================
 #  Tool tabs
-# ============================================================
+# ============================================================ 
 def tab_crop_rotate():
     img = st.session_state.current
     h, w = img.shape[:2]
@@ -589,7 +589,7 @@ def tab_crop_rotate():
     scale = min(1.0, max_w / w)
     cw, chh = int(w * scale), int(h * scale)
     disp = cv.resize(to_rgb(img), (cw, chh), interpolation=cv.INTER_AREA)
-
+    
     canvas = st_canvas(
         fill_color="rgba(34, 211, 238, 0.12)",
         stroke_width=2,
@@ -1007,17 +1007,18 @@ def tab_object_removal():
         st.caption("Fully cover the object for best results.")
 
     canvas = st_canvas(
-        fill_color="rgba(34, 211, 238, 0.0)",
-        stroke_width=brush,
-        return_image_data=True,
-        stroke_color="rgba(34, 211, 238, 1.0)",
-        background_image=Image.fromarray(disp),
-        background_color="#000000",
-        update_streamlit=True,
-        height=chh, width=cw,
-        drawing_mode="freedraw",
-        key=f"object_canvas_{st.session_state.object_canvas_version}",
-    )
+    fill_color="rgba(34, 211, 238, 0.0)",
+    stroke_width=brush,
+    return_image_data=True,
+    stroke_color="rgba(34, 211, 238, 1.0)",
+    background_image=Image.fromarray(disp),
+    background_color="#000000",
+    update_streamlit=True,
+    height=chh,
+    width=cw,
+    drawing_mode="freedraw",
+    key=f"object_canvas_{st.session_state.object_canvas_version}",
+)
 
     if canvas.image_data is None:
         return
